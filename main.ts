@@ -1,43 +1,9 @@
 import{readFileSync as a,readdirSync as b,mkdirSync as c,writeFileSync as d}from"node:fs";
-let{MAKEFUN_INPUT_DIR:I="/input",MAKEFUN_OUTPUT_DIR:O="/output"}=process.env;
-let F="y+x|0;y-x|0;Math.imul(y,x);y/x|0;y%x;Y/X|0;Y%X|0;0;y&x;y|x;y^x;0;y<<x;y>>x;(y>>>x)|0;0;y==x|0;y<x|0;Y<X|0".split(";");
+let F="y+x;y-x;Math.imul(y,x);y/x;y%x;Y/X;Y%X;;y&x;y|x;y^x;;y<<x;y>>x;y>>>x;;y==x;y<x;Y<X".split(";"),L="/",{MAKEFUN_INPUT_DIR:I="/input",MAKEFUN_OUTPUT_DIR:O="/output"}=process.env;
+let H="00e=0;01A(q);01A(q);10G();12A(S.at(-1));22A(G(),G());23A(S.at(-2));33A(S.splice(-3,1)[0]);;;;;;;;;;;;;;;;11A(-G()|0);;;;11A(~G());;;;;;;;;;;;;;;;;;;;;00p+=q;10p+=G()?0:q;10p+=G()?q:0;00C.push(p)>64?e=7:p=q&65535;00p=C.pop()??(e=8);;;;;;;;;;;;11q=G(),q>>8?e=6:A(M[q]|0);20q=G(),t=G(),q>>8?e=6:M[q]=t;;;;;;;;;;;;;;;10t=''+G(),s.length+t.length>65536?e=11:s+=t;10s.length>65535?e=11:s+=String.fromCharCode(G());01A(N[i++]??-1);10e=G()&255".split(";");
 for(let D of b(I)){
-let P=a(I+"/"+D+"/program.bin"),N=a(I+"/"+D+"/input.bin"),S=[],C=[],M=[],B=Buffer.alloc(65536),p=0,i=0,k=0,e=-1,o,m,q,v,t,x,y,Y,X,n=0;
-let U=g=>S.length<g&&(e=2),V=()=>S.length>255&&(e=3);
-while(e<0){
-if(k++>999999){e=10;break}
-if(p<0|p>=P.length){e=9;break}
-o=P[p++];m=[0,1,4][o]||(o>47&o<52?2:0);
-if(p+m>P.length){e=9;break}
-if(o>47&o<51)q=P.readInt16LE(p);
-if(o>15&&o<35&&o%4!=3||o==19){
-if(U(2))break;
-x=S.pop();y=S.pop();Y=y>>>0;X=x>>>0;
-if(o>18&o<23&&!x)e=4;else S.push(eval(F[o-16]));
-continue}
-switch(o){
-case 0:e=0;break;
-case 1:V()||S.push(P[p++]<<24>>24);break;
-case 2:V()||(S.push(P.readInt32LE(p)),p+=4);break;
-case 3:U(1)||S.pop();break;
-case 4:U(1)||V()||S.push(S.at(-1));break;
-case 5:U(2)||S.push(S.pop(),S.pop());break;
-case 6:U(2)||V()||S.push(S.at(-2));break;
-case 7:U(3)||S.push(S.splice(-3,1)[0]);break;
-case 23:U(1)||S.push(-S.pop()|0);break;
-case 27:U(1)||S.push(~S.pop());break;
-case 48:p+=2+q;break;
-case 49:U(1)||(p+=2+(S.pop()?0:q));break;
-case 50:U(1)||(p+=2+(S.pop()?q:0));break;
-case 51:C.length>63?e=7:(C.push(p+2),p=P[p]|P[p+1]<<8);break;
-case 52:(p=C.pop())==null&&(e=8);break;
-case 64:U(1)||(q=S.pop(),q<0|q>255?e=6:S.push(M[q]||0));break;
-case 65:U(2)||(q=S.pop(),v=S.pop(),q<0|q>255?e=6:M[q]=v);break;
-case 80:U(1)||(t=""+S.pop(),n+t.length>65536?e=11:n+=B.write(t,n));break;
-case 81:U(1)||(n>65535?e=11:B[n++]=S.pop()&255);break;
-case 82:V()||S.push(i<N.length?N[i++]:-1);break;
-case 83:U(1)||(e=S.pop()&255);break;
-default:e=5}
-}
-let f=O+"/"+D+"/";c(f,{recursive:!0});d(f+"stdout.bin",B.subarray(0,n));d(f+"exit.txt",e+"");
+let P=a(I+L+D+L+"program.bin"),N=a(I+L+D+L+"input.bin"),S=[],C=[],M=[],s="",p=0,i=0,k=1e6,e=-1,o,m,q,t,x,y,Y,X,A=S.push.bind(S),G=()=>S.pop();
+let K=u=>+u[0]>S.length?e=2:S.length>256+ +u[0]-+u[1]?e=3:eval(u.slice(2));
+while(e<0)k--?P[p]==null?e=9:(o=P[p++],m=+"014"[o]||(o>47&o<52?2:0),p+m>P.length?e=9:(q=m?P["read"+(m>3?"Int32LE":m>1?"Int16LE":"Int8")](p):0,p+=m,(t=F[o-16])?K("21")||(x=G(),y=G(),Y=y>>>0,X=x>>>0,!x&o>18&o<23?e=4:A(eval(t)|0)):(t=H[o],t?K(t):e=5))):e=10;
+let f=O+L+D+L;c(f,{recursive:!0});d(f+"stdout.bin",s,"latin1");d(f+"exit.txt",e+"");
 }
